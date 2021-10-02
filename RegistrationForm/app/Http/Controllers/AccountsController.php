@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Accounts;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -56,7 +57,16 @@ class AccountsController extends Controller
         $account->email = $request->email;
         $account->password = Hash::make($request->password);
         $account->save();
-        return back()->with('success','Registration Complete!');
+        
+        $minute=5;
+        $response=new Response(view('home'));
+        $response->withCookie(cookie('id',$account->id,$minute));
+        $response->withCookie(cookie('name',$account->name,$minute));
+        $response->withCookie(cookie('email',$account->email,$minute));
+
+        return $response;
+        //return view('home', compact('response'));
+        //return back()->with('success','Registration Complete!');
     }
 
     /**
